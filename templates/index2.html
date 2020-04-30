@@ -1,0 +1,81 @@
+<! DOCTYPE html> 
+<html> 
+<head lang = "en"> 
+    <meta charset = "UTF-8"> 
+    <title> Mon premier tableau de bord </title> 
+</head> 
+<body> 
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
+<div class = "container" > 
+    <div class = "row"> 
+        <div class = "col-md-6"> 
+            <span class = "chart" id = "bargraph" style="width: 40%; display: inline-block;"> 
+                <script>
+                    var graphs = {{plot1 | safe}};
+                    Plotly.plot('bargraph',graphs,{});
+                </script>
+            </span> 
+            <span class = "chart" id = "scattergraph" style="width: 40%; display: inline-block;"> 
+                <script>
+                    var graphs = {{plot2 | safe}};
+                    
+                    Plotly.plot('scattergraph',graphs,{});
+                </script>
+            </span> 
+        </div> 
+    </div> 
+</div> 
+<div>
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+    <div class=page>
+      <h1>Surfer groups</h1>
+      {% for table in tables %}
+        <h2>{{titles[loop.index]}}</h2>
+        {{ table|safe }}
+      {% endfor %}
+    </div>
+</div>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js'></script>
+<div>
+    <h2>TOP 10 CATEGORIES</h2>
+    <canvas id="chart" width="600" height="400"></canvas>
+    <script>
+      var pieData = [
+        {% for item, label, colors in set %}
+          {
+            value: {{item}},
+            label: "{{label}}",
+            color : "{{colors}}"
+          },
+        {% endfor %}
+      ];
+
+      // get bar chart canvas
+      var mychart = document.getElementById("chart").getContext("2d");  
+      steps = 10
+      max = {{ max }}
+
+      // draw pie chart
+      new Chart(document.getElementById("chart").getContext("2d")).Pie(pieData);
+
+    </script>
+</div>
+<div class="bd-example" align="middle">
+    <img src="{{url_for('static', filename='wordcloud.png')}}" align="middle" />
+</div>
+<!--<div class = "contain" > 
+    <div class = "row"> 
+        <div class = "col-md-6"> 
+            <div class = "chart" id = "scattergraph"> 
+                <script>
+                    var graphs = {{plot2 | safe}};
+                    
+                    Plotly.plot('scattergraph',graphs,{});
+                </script>
+            </div> 
+        </div> 
+    </div> 
+</div>-->
+</body> 
+</html>

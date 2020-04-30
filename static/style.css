@@ -1,0 +1,14 @@
+body{
+  color: #006900;
+  background: #006900;
+}
+.search-box{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+}
+.search-box input{
+  height:50px;
+  width: 400px;
+}
