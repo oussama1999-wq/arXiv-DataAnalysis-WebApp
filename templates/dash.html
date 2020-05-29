@@ -48,15 +48,15 @@
 <script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js'></script>
 <div  class="bar7">
    
-    <div class="border3" style="position:absolute;bottom:0px;left:0px;border-style:solid;background-color: rgba(234, 237, 243, 0.384);padding-left: 0px;padding-right: 0px;width:600px;height: 60px;border-color:rgba(234, 237, 243, 0.384);border-width: 0px;"></div>
+    <div class="border3" style="position:absolute;bottom:0px;left:0px;border-style:solid;background-color: rgba(234, 237, 243, 0.384): 0px;padding-right: 0px;width:600px;height: 60px;border-color:#092c3e;border-width: 0px;"></div>
     
     
    <canvas id="chart"></canvas>
     <script src="http://d3js.org/d3.v3.min.js"></script>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-<div id="pie" style="position:absolute;left:1px;top:1px;width:580px;height:400px" >
-    <div style="color:rgb(26, 24, 24);position:absolute;top:0px;left:0px;border-style:solid;background-color: rgba(234, 237, 243, 0.384);width:600px;height: 40px;border-color:rgba(234, 237, 243, 0.384);border-width: 0px;padding-top:15px;"><h5  style="position:absolute;left:240px; color: #306887;"> Top 10 categories</h5></div>
-    <div style="position:absolute;bottom:0px;left:h5;border-style:solid;background-color: rgba(234, 237, 243, 0.384);padding-left: 0px;padding-right: 0px;width:600px;height: 60px;border-color:rgba(234, 237, 243, 0.384);border-width: 0px;"></div>
+<div id="pie" style="position:absolute;left:0px;top:0px;width:580px;height:380px" >
+    <div style="color:rgb(26, 24, 24);position:absolute;top:0px;left:0px;border-style:solid;background-color:rgba(234, 237, 243, 0.384);width:600px;height: 40px;border-color:#092c3e;border-width: 0px;padding-top:15px;"><h5  style="position:absolute;left:240px; color: #306887;"> Top 10 categories</h5></div>
+    <div style="position:absolute;bottom:0px;left:h5;border-style:solid;background-color: #rgba(234, 237, 243, 0.384);padding-left: 0px;padding-right: 0px;width:600px;height: 60px;border-color:#092c3e;border-width: 0px;"></div>
    <script>
       var data = {{ graph_values|safe }};
       layout = {{ layout|safe }};
@@ -78,9 +78,20 @@
 </div>
 <div class = "wordcloud"  align="middle"> 
     <div class="bar5"></div>
-    <div class="bar6"><h5 class="titre3" style="color: #306887;"> Famous words</h5></div>
+    <div class="bar6"><h5 class="titre3" style="color: #306887;"> word cloud</h5></div>
     <img class="image" src="{{url_for('static', filename='wordcloud.png')}}" align="middle" />
 </div>
 <div class="TitreDashboard"><strong>Dashboard arXiv</strong></div>
+<div class="topic">
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style28.css') }}">
+    <div class="border11"> <h5 class="titre4">topic modeling</h5></div>
+    <div class="bar11"> </div>
+</div>
+    <div class="tabletopic">
+      {% for table in tab %}
+        {{ table|safe }}
+      {% endfor %}
+    </div>
+</div>
 </body>
 </html>
