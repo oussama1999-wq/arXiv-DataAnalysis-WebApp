@@ -2,14 +2,14 @@ body            { font-family: "Lucida Sans Unicode", "Lucida Grande", sans-seri
 a, h1, h2       { color: #377ba8; }
 h1, h2          { margin: 0; }
 h1              { border-bottom: 1px solid #eee; }
-h2              { font-size: 0.8em; }
+h2              { font-size: 1.5em; }
 
 table.dataframe, .dataframe th, .dataframe td {
   border: none;
   border-bottom: 1px solid #C8C8C8;
   border-collapse: collapse;
   text-align:center;
-  padding: 5px;
+  padding: 10px;
   margin-bottom: 15px;
   font-size: 0.9em;
 }
@@ -19,12 +19,11 @@ table.dataframe, .dataframe th, .dataframe td {
   background-color: #306887;
   text-align: center;
   color: white;
-  
 }
 
 .topcategories th {
-  background-color: #306887;
-  color: white;padding: 10px;
+  background-color: #77dd77;
+  color: white;
 }
 
 
