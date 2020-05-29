@@ -11,8 +11,16 @@ from wordcloud import WordCloud,STOPWORDS
 from matplotlib import pyplot as plt
 import time
 import json
-
-#function that returns a list of the authors
+import nltk
+from nltk.corpus import stopwords
+from gensim.corpora import Dictionary
+from spacy.lang.en import English
+import pyLDAvis.gensim
+from gensim.models import CoherenceModel, LdaModel, LsiModel, HdpModel
+import import_ipynb
+import gensim
+import os
+nltk.download('stopwords')
 def namess(dfa):
     names=[]
     for i in range (0,dfa.count()):
@@ -251,7 +259,7 @@ def send():
                 r20 = r20 +'%20'
             else:
                 r20 = r20 + i 
-        r = requests.get('http://export.arxiv.org/api/query?search_query=all:'+r20+'&start=0&max_results=5000')
+        r = requests.get('http://export.arxiv.org/api/query?search_query=all:'+r20+'&start=0&max_results=500')
         xml = r.text
         doc=xmltodict.parse(xml)
         data = pd.DataFrame(doc)
@@ -262,8 +270,19 @@ def send():
         dfs=df['summary']
         dfs=df['summary']
         dft=df['title']
+        dfs = dfs.str.replace("n\'t", " ")
+        dfs = dfs.str.replace("\n", " ")
+        # remove unwanted characters, numbers and symbols
+        dfs = dfs.str.replace("[^a-zA-Z#£$]", " ")
+        # remove short words (length < 3)
+        dfs = dfs.apply(lambda x: ' '.join([w for w in x.split() if len(w)>3]))
+        #Stopword Removal using NLTK
+        stop_words = stopwords.words('english')
+        stop_words.extend(['from', 'subject', 're', 'edu', 'use','the','£','$'])
+        dfs = dfs.apply(lambda x:' '.join([w for w in x.split() if w not in stop_words]))
+        dfs = dfs.apply(lambda x:' '.join([w.lower() for w in x.split()]))
         #######################################################################
-      
+        
         #######    Treatment and display of published articles    #############
         df['published']=df['published'].str.replace('T',' ')
         df['published']=df['published'].str.replace('Z',' ')
@@ -327,9 +346,77 @@ def send():
         layout = {} 
         ##########           Display of the wordcloud                 ##########
         wordcloud(dfs,dft)
+        def topicmodiling():
+            l=[]
+            text=''
+            for i in range(len(dfs)):
+                for j in dfs[i]:
+                    if(j=='\n'):
+                        j=' '
+                        text=text+j
+                    else:
+                        text=text + j
+                l.append(text)
+                text=''
+            for i in l:
+                text=text+i+"\n"
+            nlp=English()
+            doc = nlp(text)
+            texts, article = [], []
+            for w in doc:
+            # if it's not a stop word or punctuation mark or it is not a number, add it to our article!
+                if w.is_stop == False and w.is_punct == False and w.like_num == False  and w.like_email ==False :
+                # we add the lematized version of the word
+                     article.append(w.lemma_)
+            # if it's a new line, it means we're onto our next document
+                if w.text == '\n':
+                    texts.append(article)
+                    article = []
+            bigram = gensim.models.Phrases(texts)
+            texts = [bigram[line] for line in texts]
+            for i in texts:
+                for j in i:
+                    if(j=='\n'): 
+                        i.remove(j)
+            dictionary = Dictionary(texts)
 
+            corpus = [dictionary.doc2bow(text) for text in texts]
+            dictionary.token2id
+            dictionary 
+            lsimodel = LsiModel(corpus=corpus, num_topics=5, id2word=dictionary)
+            a=lsimodel.show_topics(num_topics=5)  # Showing only the top 5 topics
+            b=[]
+            for i in range(0,len(a)):
+                b.append(a[i][1].split('+'))   
+            k=[]
+            for i in range(0,len(b)):
+                k.append(b[i][0:5])
+            top1=[]
+            for i in range(0,5):
+                top1.append(k[0][i].split('*'))   
+            top2=[]
+            for i in range(0,5):
+                top2.append(k[1][i].split('*'))   
+            top3=[]
+            for i in range(0,5):
+                top3.append(k[2][i].split('*'))  
+            top4=[]
+            for i in range(0,5):
+                top4.append(k[3][i].split('*'))   
+            df1 = DataFrame (top1,columns=['Topic 1 weight','Topic 1 words'])
+            df2 = DataFrame (top2,columns=['Topic 2 weight','Topic 2 words'])
+            df3 = DataFrame (top3,columns=['Topic 3 weight','Topic 3 words'])
+            df4 = DataFrame (top4,columns=['Topic 4 weight','Topic 4 words'])
+            result = pd.concat([df1, df2,df3,df4], axis=1)
+            for col in result.columns:
+                result[col]=result[col].str.replace('"','')
+                result[col]=result[col].str.replace('-','')
+            return result
+
+        lsimodel=topicmodiling()
+                                                                    
         return render_template('dash.html', plot1 = bar1,plot2=bar2,
-                                tables=[topauth.to_html(classes='topauthors')],graph_values=graph_values, layout=layout)
+                                tables=[topauth.to_html(classes='topauthors')],tab=[lsimodel.to_html(classes='topcategories')],graph_values=graph_values, layout=layout)
     return render_template('home.html')
 
 
@@ -347,5 +434,5 @@ def about():
 
 
 if __name__ =='__main__':
-    app.debug = True
-    app.run()
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port, debug=True)
