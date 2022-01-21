@@ -31,5 +31,5 @@ spacy==2.2.4
 pyLDAvis==2.1.2
 import-ipynb==0.1.3
 nltk==3.4.5
-ipython==7.8.0
+ipython==7.16.3
 nbformat==4.4.0
